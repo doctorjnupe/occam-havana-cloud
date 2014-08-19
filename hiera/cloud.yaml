@@ -1,0 +1,303 @@
+#######
+#
+# CLOUD NETWORK NAMING SCHEME
+#
+# mgmt (management) network - primary interface used for pxe booting,
+#    for internal cloud communication, etc.
+#
+# pub (public) network - external cloud network, used for instances
+#    traffic to the outside world
+#
+# priv (private) network - used for internal instances traffic
+#    encapsulated in gre; also used for iscsi traffic
+#
+#######
+
+# General controller
+profile::openstack::controller::mysql_root_password: 'mysql'
+profile::openstack::controller::metadata_shared_secret: 'secret'
+profile::openstack::controller::secret_key: 'secret_key'
+profile::openstack::controller::admin_password: 'admin_pass'
+profile::openstack::controller::rabbit_password: 'rabbit_password'
+# Keystone
+profile::openstack::controller::keystone_db_password: 'keystone_db_password'
+profile::openstack::controller::keystone_admin_token: 'keystone_admin_token'
+profile::openstack::controller::keystone_db_user: 'keystone'
+# Glance
+profile::openstack::controller::glance_db_password: 'glance_db_password'
+profile::openstack::controller::glance_user_password: 'glance_user_password'
+profile::openstack::controller::glance_db_user: 'glance'
+# Nova
+profile::openstack::controller::nova_db_password: 'nova_db_password'
+profile::openstack::controller::nova_user_password: 'nova_user_password'
+profile::openstack::controller::nova_admin_user: 'nova'
+profile::openstack::controller::nova_db_user: 'nova'
+# Cinder
+profile::openstack::controller::cinder_user_password: 'cinder_user_password'
+profile::openstack::controller::cinder_db_password: 'cinder_db_password'
+profile::openstack::controller::cinder_db_user: 'cinder'
+# Neutron
+profile::openstack::controller::neutron_db_user: 'neutron'
+profile::openstack::controller::neutron_user_password: 'neutron_user_password'
+profile::openstack::controller::neutron_db_password: 'neutron_db_password'
+profile::openstack::controller::neutron_external_dns: "%{hiera('external_dns')}"
+# Savanna
+profile::openstack::savanna::db_pass: 'savanna'
+profile::openstack::savanna::keystone_pass: 'savanna'
+profile::openstack::savanna::keystone_tenant: 'services'
+profile::openstack::savanna::keystone_auth_protocol: 'https'
+profile::openstack::savanna::keystone_auth_host: "%{hiera('pub_ctrl_ip')}"
+profile::openstack::savanna::keystone_auth_port: '5000'
+profile::openstack::savanna::endpoint_admin_address: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::savanna::endpoint_internal_address: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::savanna::savanna_address: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::savanna::savanna_bind_address: "%{::ipaddress_eth0}"
+profile::openstack::savanna::plugins: 
+  - vanilla
+  - hdp
+# Ceilometer
+## on controller node
+profile::openstack::ceilometer::controller::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::ceilometer::controller::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
+profile::openstack::ceilometer::controller::public_url: "https://ceilometer.%{hiera('pub_domain')}:8777"
+profile::openstack::ceilometer::controller::bind_host: "%{::ipaddress_eth0}"
+profile::openstack::ceilometer::controller::service_password: 'ceilometer_service_password'
+profile::openstack::ceilometer::controller::db_password: 'ceilometer_db_password'
+profile::openstack::ceilometer::controller::metering_secret: 'secret_ceilometer_password'
+profile::openstack::ceilometer::controller::rabbit_password: "%{hiera('profile::openstack::controller::rabbit_password')}"
+### how log hold meters data - 2592000 seconds = 30 days:
+profile::openstack::ceilometer::controller::ttl: '2592000'
+profile::openstack::ceilometer::controller::ha: "%{hiera('profile::openstack::controller::ha')}"
+profile::openstack::ceilometer::controller::controllers_name::_nodequery:
+    query: 'Class[Profile::Openstack::Controller]'
+    fact: "hostname"
+profile::openstack::ceilometer::controller::ceilometer_blkdev: "%{hiera('ceilometer_db_block_device')}"
+## on compute node
+profile::openstack::ceilometer::compute::mgmt_ctrl_ip: "%{hiera('profile::openstack::ceilometer::controller::mgmt_ctrl_ip')}"
+profile::openstack::ceilometer::compute::service_password: "%{hiera('profile::openstack::ceilometer::controller::service_password')}"
+profile::openstack::ceilometer::compute::metering_secret: "%{hiera('profile::openstack::ceilometer::controller::metering_secret')}"
+profile::openstack::ceilometer::compute::rabbit_password: "%{hiera('profile::openstack::controller::rabbit_password')}"
+profile::openstack::ceilometer::compute::ha: "%{hiera('profile::openstack::controller::ha')}"
+profile::openstack::ceilometer::compute::controllers_name::_nodequery:
+    query: 'Class[Profile::Openstack::Controller]'
+    fact: "hostname"
+
+# Swift
+## on controller node
+profile::openstack::swift::proxy::public_address: "swift.%{hiera('pub_domain')}"
+profile::openstack::swift::proxy::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::swift::proxy::priv_interface: "%{hiera('priv_interface')}"
+profile::openstack::swift::proxy::mgmt_interface: "%{hiera('mgmt_interface')}"
+profile::openstack::swift::proxy::swift_hash_suffix: "swift_hash_suffix"
+profile::openstack::swift::proxy::service_username: "swift"
+profile::openstack::swift::proxy::service_password: "swift_password"
+profile::openstack::swift::proxy::dispersion_username: "swift_dispersion"
+profile::openstack::swift::proxy::dispersion_password: "dispersion_password"
+profile::openstack::swift::proxy::proxies_ip::_nodequery:
+    query: 'Class[Profile::Openstack::Swift::Proxy]'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+profile::openstack::swift::proxy::storages_ip::_nodequery:
+    query: 'Class[Profile::Openstack::Swift::Storage]'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+## on compute node
+profile::openstack::swift::storage::priv_interface: "%{hiera('profile::openstack::swift::proxy::priv_interface')}"
+profile::openstack::swift::storage::swift_hash_suffix: "%{hiera('profile::openstack::swift::proxy::swift_hash_suffix')}"
+profile::openstack::swift::storage::storage_device: "%{hiera('swift_block_device')}"
+profile::openstack::swift::storage::proxies_ip::_nodequery:
+    query: 'Class[Swift::Proxy]'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+
+# Compute data
+
+profile::openstack::compute::nova_admin_user: 'nova'
+profile::openstack::compute::nova_user_password: 'nova_user_password'
+
+profile::openstack::compute::rabbit_password: 'rabbit_password'
+profile::openstack::compute::nova_db_user: 'nova'
+profile::openstack::compute::neutron_user_password: 'neutron_user_password'
+profile::openstack::compute::nova_db_password: 'nova_db_password'
+profile::openstack::compute::neutron_admin_user: 'neutron'
+
+memcached::params::config_tmpl: 'profile/templates/ubuntu.memcached.conf.erb'
+
+nova::compute::vncproxy_protocol: 'https'
+
+rabbitmq::server::node_ip_address: "%{hiera('mgmt_ctrl_ip')}"
+
+profile::tempest::users::keystone_user:
+  'demo':
+    name: 'demo'
+    tenant: 'demo'
+    email: 'demo@demo'
+    password: 'secret'
+  'alt_demo':
+    name: 'alt_demo'
+    tenant: 'alt_demo'
+    email: 'alt_demo@alt_demo'
+    password: 'secret'
+
+profile::tempest::users::keystone_user_role:
+  'demo@demo':
+    roles: '_member_'
+  'alt_demo@alt_demo':
+    roles: '_member_'
+
+## HOSTNAME BASED ENPOINTS
+
+# Keystone Config
+profile::openstack::controller::public_address: "auth.%{hiera('pub_domain')}"
+
+# Nova Config
+openstack::keystone::nova_public_address: "compute.%{hiera('pub_domain')}"
+
+# Cinder Config
+openstack::keystone::cinder_public_address: "vol.%{hiera('pub_domain')}"
+
+# Glance Config
+openstack::keystone::glance_public_address: "image.%{hiera('pub_domain')}"
+
+# Neutron Config
+openstack::keystone::neutron_public_address: "net.%{hiera('pub_domain')}"
+
+# Savanna config
+profile::openstack::savanna::endpoint_public_address: "mapreduce.%{hiera('pub_domain')}"
+
+
+profile::tempest::users::keystone_tenant:
+  'demo':
+    description: 'demo tenant'
+  'alt_demo':
+    description: 'alt_demo tenant'
+
+
+
+profile::tempest::setup::tempest_identity_uri: "https://auth.%{hiera('pub_domain')}/v2.0/"
+profile::tempest::setup::tempest_identity_uri_v3: "https://auth.%{hiera('pub_domain')}/v2.0/"
+profile::tempest::setup::tempest_dashboard_url: "https://cloud.%{hiera('pub_domain')}/horizon/"
+
+profile::openstack::volumes::physical_volume_name: "%{hiera('cinder_block_device')}"
+
+####################################################
+#Compute data
+####################################################
+profile::openstack::compute::mgmt_interface: "%{hiera('mgmt_interface')}"
+profile::openstack::compute::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::compute::pub_interface: "%{hiera('pub_interface')}"
+profile::openstack::compute::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
+profile::openstack::compute::priv_interface: "%{hiera('priv_interface')}"
+
+profile::openstack::compute::neutron: true
+profile::openstack::compute::cinder_db_password: 'cinder_db_password'
+profile::openstack::compute::glance_api_servers: "%{hiera('mgmt_ctrl_ip')}:9292"
+profile::openstack::compute::vncproxy_host: "cloud.%{hiera('pub_domain')}"
+
+profile::openstack::compute::neutron_auth_url: "http://%{hiera('mgmt_ctrl_ip')}:35357/v2.0"
+profile::openstack::compute::nova_blkdev: "%{hiera('nova_block_device')}"
+
+
+####################################################
+#Controller data
+####################################################
+profile::openstack::controller::mgmt_interface: "%{hiera('mgmt_interface')}"
+profile::openstack::controller::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::controller::pub_interface: "%{hiera('pub_interface')}"
+profile::openstack::controller::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
+profile::openstack::controller::priv_interface: "%{hiera('priv_interface')}"
+
+profile::openstack::controller::bridge_interface: "%{hiera('pub_interface')}"
+profile::openstack::controller::bind_address: "%{::ipaddress_eth0}"
+profile::openstack::controller::neutron: true
+profile::openstack::controller::public_interface: "%{hiera('mgmt_interface')}"
+profile::openstack::controller::private_interface: "%{hiera('priv_interface')}"
+profile::openstack::controller::allow_overlapping_ips: true
+profile::openstack::controller::mysqld_settings:
+        innodb_buffer_pool_size: '40G'
+        innodb_buffer_pool_instances: '8'
+        innodb_flush_method: 'O_DIRECT'
+        key_buffer: '2048M'
+        max_allowed_packet: '2048M'
+        thread_stack: '512K'
+        thread_cache_size: '1024'
+        query_cache_limit: '2048M'
+        query_cache_size: '128M'
+        max_connections: '1024'
+profile::openstack::controller::public_protocol: 'https'
+profile::openstack::controller::glance_blkdev: "%{hiera('glance_block_device')}"
+profile::openstack::controller::instance_mtu: '1400'
+profile::openstack::horizon::ssl_no_verify: true
+profile::openstack::horizon::allowed_hosts: "cloud.%{hiera('pub_domain')}"
+profile::openstack::horizon::keystone_host: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::horizon::service_interface: "%{hiera('mgmt_interface')}"
+openstack::neutron::metadata_ip: "%{hiera('mgmt_ctrl_ip')}"
+openstack::glance::bind_host: "%{::ipaddress_eth0}"
+openstack::neutron::bind_address: "%{::ipaddress_eth0}"
+nova::api::metadata_listen: "%{::ipaddress_eth0}"
+##########################################################
+# API Registration
+##########################################################
+
+profile::openstack::api::service_address: "%{::ipaddress_eth0}"
+
+##########################################################
+# Proxy
+##########################################################
+profile::openstack::proxy::listen_address_mgmt: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::proxy::listen_address_pub: "%{hiera('pub_ctrl_ip')}"
+profile::openstack::proxy::firewall: 'true'
+profile::openstack::proxy::horizon_url: "cloud.%{hiera('pub_domain')}"
+profile::openstack::proxy::keystone_url: "auth.%{hiera('pub_domain')}"
+profile::openstack::proxy::nova_url: "compute.%{hiera('pub_domain')}"
+profile::openstack::proxy::ec2_url: "ec2.%{hiera('pub_domain')}"
+profile::openstack::proxy::cinder_url: "vol.%{hiera('pub_domain')}"
+profile::openstack::proxy::glance_url: "image.%{hiera('pub_domain')}"
+profile::openstack::proxy::neutron_url: "net.%{hiera('pub_domain')}"
+profile::openstack::proxy::swift_url: "swift.%{hiera('pub_domain')}"
+profile::openstack::proxy::savanna_url: "mapreduce.%{hiera('pub_domain')}"
+profile::openstack::proxy::ceilometer_url: "ceilometer.%{hiera('pub_domain')}"
+profile::openstack::proxy::certificate_name: "%{hiera('certificate_name')}"
+
+##########################################################
+#Firewall
+##########################################################
+profile::firewall::post::destination: "%{hiera('pub_ctrl_ip')}"
+
+#Tenants network and firewall
+profile::openstack::network::public_net_cidr: "%{hiera('cloud_public_net_cidr')}"
+profile::openstack::network::public_net_name: "%{hiera('cloud_public_net_name')}"
+profile::openstack::network::public_net_gateway: "%{hiera('cloud_public_net_gateway')}"
+profile::openstack::network::public_net_allocation_start: "%{hiera('cloud_public_net_allocation_start')}"
+profile::openstack::network::public_net_allocation_end: "%{hiera('cloud_public_net_allocation_end')}"
+
+profile::openstack::firewall::mgmt_net_cidr: "%{hiera('mgmt_network')}"
+profile::openstack::firewall::public_net_cidr: "%{hiera('cloud_public_net_cidr')}"
+profile::openstack::firewall::public_net_allocation_start: "%{hiera('cloud_public_net_allocation_start')}"
+profile::openstack::firewall::public_net_allocation_end: "%{hiera('cloud_public_net_allocation_end')}"
+
+##########################################################
+# PuppetDB backend
+##########################################################
+profile::openstack::controller::ha: "%{hiera('ha_setup')}"
+profile::openstack::controller::controllers_ip::_nodequery:
+    query: 'Class[Profile::Openstack::Controller]'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+
+profile::openstack::controller::controllers_name::_nodequery:
+    query: 'Class[Profile::Openstack::Controller]'
+    fact: "hostname"
+
+profile::openstack::controller::mysqls::_nodequery:
+    query: 'Class[Mysql::Server]'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+
+profile::openstack::controller::galera_synced::_nodequery:
+    query: 'galera_replication_comment=Synced'
+    fact: "ipaddress_%{hiera('mgmt_interface')}"
+
+interfaces:
+  "%{hiera('priv_interface')}":
+    family: 'inet'
+    method: 'dhcp'
+    options: 
+      - 'mtu 9000'
+    auto: 1
+
