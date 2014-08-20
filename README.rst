@@ -167,6 +167,7 @@ Authors & Contributors
 * Ari Saha <ari.saha@att.com>
 * Paul McGoldrick <paul.mcgoldrick@att.com>
 * Erik Sundelof <eriks@att.com>
+* Ashu Sharma <ashu.sharma@att.com>
 * Tomasz Z. Napierała <tnapierala@mirantis.com>
 * Piotr Misiak <pmisiak@mirantis.com>
 * Kamil Świątkowski <kswiatkowski@mirantis.com>
