@@ -147,7 +147,6 @@ class profile::openstack::controller (
   $neutron_db_user         = undef,
   $neutron_db_name         = 'neutron',
   $enable_neutron_server   = true,
-  $enabled                 = true,
   $instance_mtu            = '1500',
   $neutron_external_dns    = '8.8.8.8',
   $controllers_ip          = undef,
@@ -156,6 +155,7 @@ class profile::openstack::controller (
   $galera_synced           = [],
   $ha                      = false,
   $real_db_host            = undef,
+  $swift                   = true,
 ){
 
   include sudo
@@ -397,6 +397,10 @@ class profile::openstack::controller (
       }
     }
 
+    if ($glance_backend == 'swift' and ! str2bool($swift)) {
+      fail("Swift have to be enabled when it is used as a glance backend")
+    }
+
     class {'::openstack::controller':
       db_host                       => $real_db_host,
       admin_email                   => $admin_email,
@@ -412,6 +416,9 @@ class profile::openstack::controller (
       glance_user_password          => $glance_user_password,
       glance_api_servers            => "${bind_address}:9292",
       glance_registry_host          => $bind_address,
+      glance_backend                => $glance_backend,
+      swift_store_user              => 'services:glance',
+      swift_store_key               => $glance_user_password,
       horizon                       => false,
       keystone_host                 => $bind_address,
       keystone_admin_token          => $keystone_admin_token,
@@ -485,5 +492,10 @@ class profile::openstack::controller (
       }
     }
 
+    if (str2bool($swift) and str2bool($::keystone_available)) {
+      include profile::openstack::swift::proxy
+      Class['profile::openstack::firewall']
+        -> Class['profile::openstack::swift::proxy']
+    }
   }
 }

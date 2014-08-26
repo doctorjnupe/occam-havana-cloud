@@ -39,13 +39,10 @@ class role::openstack::controller {
   include profile::openstack::glanceimages
   include profile::openstack::savanna
   include profile::openstack::ceilometer::controller
-  include profile::openstack::swift::proxy
 
   #Class['profile::openstack::volumes']
   #  -> Class['profile::openstack::controller']
   Class['profile::openstack::controller']
     -> Class['profile::openstack::glanceimages']
 
-  Class['profile::openstack::firewall']
-    -> Class['profile::openstack::swift::proxy']
 }

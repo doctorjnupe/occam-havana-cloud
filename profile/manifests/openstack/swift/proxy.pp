@@ -106,6 +106,7 @@ class profile::openstack::swift::proxy (
       admin_protocol    => $internal_protocol,
       internal_address  => $mgmt_ctrl_ip,
       internal_protocol => $internal_protocol,
+      operator_roles    => $operator_roles,
     }
 
     class { 'swift::keystone::dispersion':
