@@ -465,6 +465,7 @@ class profile::openstack::controller (
             'binlog_format'                   => 'ROW',
             'innodb_autoinc_lock_mode'        => '2',
             'innodb_locks_unsafe_for_binlog'  => '1',
+            'innodb_log_file_size'            => '50331648',
             'pid-file'                        => '/var/run/mysqld/mysqld.pid',
             'socket'                          => '/var/run/mysqld/mysqld.sock',
             'wsrep_provider'                  => '/usr/lib/libgalera_smm.so',
