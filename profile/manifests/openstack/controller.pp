@@ -269,7 +269,7 @@ class profile::openstack::controller (
       }
       #percona dirty hack
       exec {'fake mysql config':
-        command => 'mkdir /etc/mysql; echo "[mysqld]\npid-file = /var/run/mysqld/mysqld.pid\nquery_cache_size = 0" > /etc/mysql/my.cnf',
+        command => 'mkdir /etc/mysql; echo "[mysqld]\npid-file = /var/run/mysqld/mysqld.pid\nquery_cache_size = 0\ninnodb_log_file_size = 50331648" > /etc/mysql/my.cnf',
         path    => ['/usr/sbin', '/usr/bin', '/sbin', '/bin' ],
         creates => '/etc/mysql/my.cnf',
         before  => Service['mysqld'],
