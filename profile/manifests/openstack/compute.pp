@@ -110,7 +110,7 @@ class profile::openstack::compute (
   # General
   $migration_support             = true,
   $verbose                       = 'True',
-  $enabled                       = true,
+  $swift                         = true,
 ) {
 
   include sudo
@@ -257,4 +257,10 @@ class profile::openstack::compute (
 
   # Initialize users for the base role
   Profile::Users::Managed<| tag == openstack  |>
+
+  if str2bool($swift) {
+    include profile::openstack::swift::storage
+    Class['profile::openstack::firewall']
+      -> Class['profile::openstack::swift::storage']
+  }
 }

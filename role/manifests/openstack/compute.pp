@@ -31,12 +31,9 @@ class role::openstack::compute {
   include profile::openstack::volumes
   include profile::openstack::firewall
   include profile::openstack::ceilometer::compute
-  include profile::openstack::swift::storage
 
   Class['profile::base']
     -> Class['profile::cloud']
     -> Class['profile::openstack::compute']
 
-  Class['profile::openstack::firewall']
-    -> Class['profile::openstack::swift::storage']
 }

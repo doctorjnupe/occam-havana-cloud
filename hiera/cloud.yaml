@@ -193,6 +193,7 @@ profile::openstack::compute::vncproxy_host: "cloud.%{hiera('pub_domain')}"
 
 profile::openstack::compute::neutron_auth_url: "http://%{hiera('mgmt_ctrl_ip')}:35357/v2.0"
 profile::openstack::compute::nova_blkdev: "%{hiera('nova_block_device')}"
+profile::openstack::compute::swift: "%{hiera('swift')}"
 
 
 ####################################################
@@ -203,7 +204,6 @@ profile::openstack::controller::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::controller::pub_interface: "%{hiera('pub_interface')}"
 profile::openstack::controller::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
 profile::openstack::controller::priv_interface: "%{hiera('priv_interface')}"
-
 profile::openstack::controller::bridge_interface: "%{hiera('pub_interface')}"
 profile::openstack::controller::bind_address: "%{::ipaddress_eth0}"
 profile::openstack::controller::neutron: true
@@ -223,14 +223,17 @@ profile::openstack::controller::mysqld_settings:
         max_connections: '1024'
 profile::openstack::controller::public_protocol: 'https'
 profile::openstack::controller::glance_blkdev: "%{hiera('glance_block_device')}"
+profile::openstack::controller::glance_backend: "%{hiera('glance_backend')}"
 profile::openstack::controller::instance_mtu: '1400'
+profile::openstack::controller::swift: "%{hiera('swift')}"
 profile::openstack::horizon::ssl_no_verify: true
 profile::openstack::horizon::allowed_hosts: "cloud.%{hiera('pub_domain')}"
 profile::openstack::horizon::keystone_host: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::horizon::service_interface: "%{hiera('mgmt_interface')}"
 openstack::neutron::metadata_ip: "%{hiera('mgmt_ctrl_ip')}"
-openstack::glance::bind_host: "%{::ipaddress_eth0}"
 openstack::neutron::bind_address: "%{::ipaddress_eth0}"
+openstack::glance::bind_host: "%{::ipaddress_eth0}"
+openstack::glance::swift_store_auth_address: "http://%{hiera('mgmt_ctrl_ip')}:5000/v2.0/"
 nova::api::metadata_listen: "%{::ipaddress_eth0}"
 ##########################################################
 # API Registration
