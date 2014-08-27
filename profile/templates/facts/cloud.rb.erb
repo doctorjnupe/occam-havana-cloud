@@ -11,7 +11,7 @@ url['neutron'] = '<%= @neutron %>'
 total = 0
 url.each do |service,uri|
   puts "#{service}_url=#{uri}"
-  %x( curl --connect-timeout 1 '#{uri}' -s -o /dev/null 2>/dev/null )
+  %x( curl --connect-timeout 1 'https://#{uri}' -f -s -o /dev/null 2>/dev/null )
   if $?.exitstatus == 0
     total += 1
     puts "#{service}_available=true"
