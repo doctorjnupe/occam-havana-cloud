@@ -39,6 +39,7 @@
 #
 # Copyright 2013 AT&T Foundry, unless otherwise noted.
 class profile::openstack::glanceimages {
+  $glance_backend = hiera('profile::openstack::controller::glance_backend')
 
   ## workaround for self-signed certificate
   ## to be removed in the future
@@ -57,7 +58,18 @@ class profile::openstack::glanceimages {
   #}
 
   ## end of workaround
-  if $::cloud_available {
+
+  if $glance_backend == 'file' {
+    $run = true
+  } elsif $glance_backend == 'swift' and str2bool($::swift_available) {
+    $run = true
+  } elsif $glance_backend == 'swift' and ! str2bool($::swift_available) {
+    $run = false
+  } else {
+    fail("Unsupported glance backend")
+  }
+
+  if (str2bool($::cloud_available) and $run) {
 
     glance_image { 'Ubuntu 12.04 cloudimg amd64':
       ensure           => present,
