@@ -184,5 +184,13 @@ class profile::openstack::swift::proxy (
       dump_json     => $dispersion_dump_json,
       require       => [ Class['swift'], Class['::swift::proxy'] ]
     }
+
+    file{'/etc/facter/facts.d/swift.sh':
+      ensure  => present,
+      content => template('profile/facts/swift.sh.erb'),
+      mode    => '0700',
+      owner   => root,
+      require => [ Class['swift'], File['/etc/facter/facts.d'] ],
+    }
   }
 }
