@@ -112,4 +112,9 @@ class profile::openstack::api (
     ipaddresses       => $service_address,
     ports             => '8777',
   }
+  @@haproxy::balancermember {"rabbit-${::fqdn}":
+    listening_service => 'rabbit',
+    ipaddresses       => $service_address,
+    ports             => '5672',
+  }
 }

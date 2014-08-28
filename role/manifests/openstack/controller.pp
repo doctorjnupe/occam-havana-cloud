@@ -45,4 +45,7 @@ class role::openstack::controller {
   Class['profile::openstack::controller']
     -> Class['profile::openstack::glanceimages']
 
+  include rabbitmq
+  Class['rabbitmq::install'] -> Class['haproxy']
+
 }
