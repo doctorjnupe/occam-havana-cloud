@@ -115,7 +115,7 @@ mod 'sysctl',
 
 mod 'tempest',
   :git => 'https://github.com/kswia/puppet-tempest.git',
-  :ref => '5dd4523ea56cf795a45f6036c51d37050e9411c2'
+  :ref => '4e8a65be92b2b966cf17883a25ca1722c5e090bd'
 
 # OK
 mod 'vswitch',
