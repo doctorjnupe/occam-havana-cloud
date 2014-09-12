@@ -122,7 +122,7 @@ memcached::params::config_tmpl: 'profile/templates/ubuntu.memcached.conf.erb'
 
 nova::compute::vncproxy_protocol: 'https'
 
-rabbitmq::server::node_ip_address: "%{hiera('mgmt_ctrl_ip')}"
+rabbitmq::server::node_ip_address: "%{::ipaddress_eth0}"
 
 profile::tempest::users::keystone_user:
   'demo':

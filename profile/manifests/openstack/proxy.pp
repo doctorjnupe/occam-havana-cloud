@@ -146,7 +146,8 @@ class profile::openstack::proxy (
   $is_keystone_admin  = "is_keystone_admin    dst_port 35357"
   $is_ceilometer      = "is_ceilometer hdr_end(host) -i ${ceilometer_url} || dst_port 8777"
   $is_swift           = "is_swift hdr_end(host) -i ${swift_url} || dst_port 8080"
-  $acls               = [$is_horizon, $is_novnc, $is_redirect, $is_nova, $is_neutron, $is_glance, $is_cinder, $is_ec2, $is_keystone, $is_keystone_admin, $is_savanna, $is_ceilometer, $is_swift]
+  $is_rabbit          = "is_rabbit  dst_port 5672"
+  $acls               = [$is_horizon, $is_novnc, $is_redirect, $is_nova, $is_neutron, $is_glance, $is_cinder, $is_ec2, $is_keystone, $is_keystone_admin, $is_savanna, $is_ceilometer, $is_swift, $is_rabbit]
   $backends           = [
     'nova if is_nova',
     'neutron if is_neutron',
@@ -160,6 +161,7 @@ class profile::openstack::proxy (
     'savanna if is_savanna',
     'ceilometer if is_ceilometer',
     'swift if is_swift',
+    'rabbit if is_rabbit',
   ]
 
   haproxy::frontend {'openstack-public':
@@ -207,6 +209,7 @@ class profile::openstack::proxy (
         "${listen_address_mgmt}:8386",
         "${listen_address_mgmt}:8777",
         "${listen_address_mgmt}:8080",
+        "${listen_address_mgmt}:5672",
       ],
       'acl'             => $acls,
       'use_backend'     => $backends,
@@ -271,6 +274,11 @@ class profile::openstack::proxy (
     },
   }
   haproxy::backend {'swift':
+    options => {
+      'option'  => [],
+    },
+  }
+  haproxy::backend {'rabbit':
     options => {
       'option'  => [],
     },
