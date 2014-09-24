@@ -78,7 +78,7 @@ mod 'nova',
 
 # OK
 mod 'openstack',
-	:git => 'https://github.com/stackforge/puppet-openstack.git',
+	:git => 'https://github.com/kswia/puppet-openstack.git',
 	:ref => 'stable/havana'
 
 # update module to 0.3.0
