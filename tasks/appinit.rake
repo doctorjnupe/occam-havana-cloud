@@ -21,10 +21,10 @@
 ## THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                ##
 ##                                                                           ##
 ###############################################################################
-namespace :cloud do
+namespace :"havana-cloud" do
   desc 'Cloud app initialization'
   task :init do
-    app = 'cloud'
+    app = 'havana-cloud'
     puts 'Init of cloud app'
     run "cd puppet/apps/#{app} && r10k -t -v INFO puppetfile install"
   end
