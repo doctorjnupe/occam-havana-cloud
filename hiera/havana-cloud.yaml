@@ -300,7 +300,6 @@ interfaces:
   "%{hiera('priv_interface')}":
     family: 'inet'
     method: 'dhcp'
-    options: 
-      - 'mtu 9000'
-    auto: 1
+    mtu: 9000
+    auto: true
 
