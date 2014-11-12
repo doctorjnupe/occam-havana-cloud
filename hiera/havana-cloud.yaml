@@ -52,7 +52,7 @@ profile::openstack::savanna::endpoint_admin_address: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::savanna::endpoint_internal_address: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::savanna::savanna_address: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::savanna::savanna_bind_address: "%{::ipaddress_eth0}"
-profile::openstack::savanna::plugins: 
+profile::openstack::savanna::plugins:
   - vanilla
   - hdp
 # Ceilometer
@@ -181,7 +181,8 @@ profile::openstack::volumes::physical_volume_name: "%{hiera('cinder_block_device
 #Compute data
 ####################################################
 profile::openstack::compute::mgmt_interface: "%{hiera('mgmt_interface')}"
-profile::openstack::compute::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::compute::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_vip')}"
+profile::openstack::compute::mgmt_ctrl_vip: "%{hiera('mgmt_ctrl_vip')}"
 profile::openstack::compute::pub_interface: "%{hiera('pub_interface')}"
 profile::openstack::compute::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
 profile::openstack::compute::priv_interface: "%{hiera('priv_interface')}"
@@ -195,12 +196,12 @@ profile::openstack::compute::neutron_auth_url: "http://%{hiera('mgmt_ctrl_ip')}:
 profile::openstack::compute::nova_blkdev: "%{hiera('nova_block_device')}"
 profile::openstack::compute::swift: "%{hiera('swift')}"
 
-
 ####################################################
 #Controller data
 ####################################################
 profile::openstack::controller::mgmt_interface: "%{hiera('mgmt_interface')}"
 profile::openstack::controller::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
+profile::openstack::controller::mgmt_ctrl_vip: "%{hiera('mgmt_ctrl_vip')}"
 profile::openstack::controller::pub_interface: "%{hiera('pub_interface')}"
 profile::openstack::controller::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
 profile::openstack::controller::priv_interface: "%{hiera('priv_interface')}"
@@ -300,7 +301,6 @@ interfaces:
   "%{hiera('priv_interface')}":
     family: 'inet'
     method: 'dhcp'
-    options: 
+    options:
       - 'mtu 9000'
     auto: 1
-

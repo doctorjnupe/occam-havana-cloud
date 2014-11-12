@@ -66,6 +66,7 @@ class profile::openstack::compute (
   $network_config                = {},
   $multi_host                    = false,
   $enabled_apis                  = 'ec2,osapi_compute,metadata',
+  $mgmt_ctrl_vip                 = undef,
   # Neutron
   $neutron                       = true,
   $neutron_user_password         = undef,
