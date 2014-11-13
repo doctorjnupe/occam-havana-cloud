@@ -45,6 +45,7 @@ class profile::openstack::controller (
   #cloud networks
   $mgmt_interface         = undef,
   $mgmt_ctrl_ip           = undef,
+  $mgmt_ctrl_vip          = undef,
   $pub_interface          = undef,
   $pub_ctrl_ip            = undef,
   $priv_interface         = undef,
@@ -113,6 +114,7 @@ class profile::openstack::controller (
   $rabbit_cluster_nodes    = false,
   $rabbit_user             = 'openstack',
   $rabbit_virtual_host     = '/',
+  $ha_rabbit_host          = undef,
   # VNC
   $vnc_enabled             = true,
   $vncproxy_host           = true,
@@ -452,8 +454,8 @@ class profile::openstack::controller (
       token_format                  => $keystone_token_format,
       internal_address              => $mgmt_ctrl_ip,
       vncproxy_host                 => $bind_address,
-      rabbit_host                   => $mgmt_ctrl_ip,
-      rabbit_hosts                  => $ha_rabbit_hosts,
+      rabbit_host                   => $mgmt_ctrl_vip,
+      rabbit_hosts                  => [$mgmt_ctrl_vip],
       rabbit_cluster_nodes          => $ha_rabbit_cluster_nodes,
     }
 
