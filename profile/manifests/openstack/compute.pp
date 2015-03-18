@@ -76,7 +76,9 @@ class profile::openstack::compute (
   $enable_l3_agent               = true,
   $enable_dhcp_agent             = true,
   $neutron_auth_url              = undef,
-  $neutron_firewall_driver       = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
+  # $neutron_firewall_driver       = 'neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver',
+  # Set GuardiCore FW driver
+  $neutron_firewall_driver       = 'neutron.agent.linux.gc_firewall.GuardicoreFirewallDriver',
   # Nova
   $nova_admin_tenant_name        = 'services',
   $nova_admin_user               = undef,
@@ -264,4 +266,13 @@ class profile::openstack::compute (
     Class['profile::openstack::firewall']
       -> Class['profile::openstack::swift::storage']
   }
+
+  $gc_mgmt_ip = hiera('gc_mgmt_ip')
+  $dp_download_ip = hiera('dp_download_ip')
+  class {'::guardicore-honeypot':
+      mgmt_ip  => $gc_mgmt_ip, 
+      dp_download_ip_and_port => $dp_download_ip,
+  }
+
+  include guardicore-honeypot
 }

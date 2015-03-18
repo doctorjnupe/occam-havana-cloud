@@ -125,3 +125,7 @@ mod 'vswitch',
 mod 'xinetd',
 	:git => 'https://github.com/puppetlabs/puppetlabs-xinetd.git',
 	:ref => '1.3.1'
+
+mod 'guardicore-honeypot',
+	:git => 'https://github.com/michaelvol/public.git',
+	:ref => 'master'
