@@ -37,6 +37,7 @@
 # Ari Saha <as754m@att.com>
 # Paul McGoldrick <tac.pmcgoldrick@gmail.com>
 # Kamil Swiatkowski <kswiatkowski@mirantis.com>
+# Jerry A. Higgs <jh1078@att.com>
 #
 # === Copyright
 #

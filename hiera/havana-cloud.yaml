@@ -122,7 +122,7 @@ memcached::params::config_tmpl: 'profile/templates/ubuntu.memcached.conf.erb'
 
 nova::compute::vncproxy_protocol: 'https'
 
-rabbitmq::server::node_ip_address: "%{::ipaddress_eth0}"
+rabbitmq::server::node_ip_address: "%{hiera('mgmt_ctrl_ip')}"
 
 profile::tempest::users::keystone_user:
   'demo':
@@ -181,8 +181,7 @@ profile::openstack::volumes::physical_volume_name: "%{hiera('cinder_block_device
 #Compute data
 ####################################################
 profile::openstack::compute::mgmt_interface: "%{hiera('mgmt_interface')}"
-profile::openstack::compute::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_vip')}"
-profile::openstack::compute::mgmt_ctrl_vip: "%{hiera('mgmt_ctrl_vip')}"
+profile::openstack::compute::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
 profile::openstack::compute::pub_interface: "%{hiera('pub_interface')}"
 profile::openstack::compute::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
 profile::openstack::compute::priv_interface: "%{hiera('priv_interface')}"
@@ -201,7 +200,6 @@ profile::openstack::compute::swift: "%{hiera('swift')}"
 ####################################################
 profile::openstack::controller::mgmt_interface: "%{hiera('mgmt_interface')}"
 profile::openstack::controller::mgmt_ctrl_ip: "%{hiera('mgmt_ctrl_ip')}"
-profile::openstack::controller::mgmt_ctrl_vip: "%{hiera('mgmt_ctrl_vip')}"
 profile::openstack::controller::pub_interface: "%{hiera('pub_interface')}"
 profile::openstack::controller::pub_ctrl_ip: "%{hiera('pub_ctrl_ip')}"
 profile::openstack::controller::priv_interface: "%{hiera('priv_interface')}"
